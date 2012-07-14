@@ -23,6 +23,8 @@ The sqla_mixins module can be installed via:
 
     pip install sqla_mixins
 
+The module has been tested to work both with python 2.7 and python 3.2. It
+should work with python 2.6 and any newer versions of python.
 
 ### Usage
 
