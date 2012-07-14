@@ -15,3 +15,16 @@ Currently it supports two such mixins:
   into a database. It provides automatic password salting and hashing through
   the recommended [PBKDF2](http://en.wikipedia.org/wiki/PBKDF2) key derivation
   function.
+
+
+### Installation
+
+The sqla_mixins module can be installed via:
+
+    pip install sqla_mixins
+
+
+### Usage
+
+For example usage of this module, please see the
+[example.py](/bboe/sqla_mixins/blob/master/example.py) file.
