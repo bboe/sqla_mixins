@@ -5,7 +5,7 @@ Currently it supports two such mixins:
 
 * BasicBase
 
-  The BasicBase class can be used either as a mixin or simple as the base class
+  The BasicBase class can be used either as a mixin or simply as the base class
   for all of your sqlalchemy classes. This mixin automatically provides the
   tablename for the class, as well as two columns, `id` and `created_at`.
 

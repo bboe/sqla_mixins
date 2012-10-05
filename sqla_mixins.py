@@ -1,9 +1,15 @@
+import sys
 from passlib.hash import pbkdf2_sha512
 from sqlalchemy import func
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy import Column, DateTime, String, Integer, Unicode
 
-__version__ = '0.1'
+if sys.version_info < (3, 0):
+    builtins = __import__('__builtin__')
+else:
+    import builtins
+
+__version__ = '0.2'
 
 
 class BasicBase(object):
@@ -14,6 +20,14 @@ class BasicBase(object):
     @declared_attr
     def __tablename__(cls):
         return cls.__name__.lower()
+
+    @classmethod
+    def fetch_by_id(cls, element_id):
+        if not hasattr(builtins, '_sqla_mixins_session'):
+            raise Exception('__builtin__._sqla_mixins_session must be set to '
+                            'your session class')
+        session = builtins._sqla_mixins_session()
+        return session.query(cls).filter_by(id=element_id).first()
 
 
 class UserMixin(object):

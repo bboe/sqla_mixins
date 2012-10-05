@@ -1,15 +1,23 @@
 #!/usr/bin/env python
 from __future__ import unicode_literals
-
+import sys
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Unicode
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqla_mixins import BasicBase, UserMixin
 
+if sys.version_info < (3, 0):
+    builtins = __import__('__builtin__')
+else:
+    import builtins
+
 
 Base = declarative_base(cls=BasicBase)
 Session = scoped_session(sessionmaker())
+
+# Make session available to sqla_mixins
+builtins._sqla_mixins_session = Session
 
 
 class User(UserMixin, Base):
@@ -74,6 +82,10 @@ def main():
             print('The password is `{0}`'.format(password))
         else:
             print('The password is not `{0}`'.format(password))
+
+    # Fetch a user by id
+    user3 = User.fetch_by_id(user1.id)
+    assert(user1 == user3)
 
 
 if __name__ == "__main__":
