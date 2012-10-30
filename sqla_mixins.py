@@ -1,8 +1,7 @@
 import sys
 from passlib.hash import pbkdf2_sha512
-from sqlalchemy import func
+from sqlalchemy import Column, DateTime, String, Integer, Unicode, func
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy import Column, DateTime, String, Integer, Unicode
 
 if sys.version_info < (3, 0):
     builtins = __import__('__builtin__')
