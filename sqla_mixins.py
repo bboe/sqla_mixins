@@ -48,8 +48,8 @@ class BasicBase(object):
         should be added to the session and committed."""
         modified = False
         for attr, value in kwargs.items():
-            if getattr(instance, attr) != value:
-                setattr(instance, attr, value)
+            if getattr(self, attr) != value:
+                setattr(self, attr, value)
                 modified = True
         return modified
 
