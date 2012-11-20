@@ -8,25 +8,50 @@ if sys.version_info < (3, 0):
 else:
     import builtins
 
-__version__ = '0.2'
+__version__ = '0.3'
 
 
 class BasicBase(object):
+    """A base sqlalchemy class that provides `id` and `created_at` fields."""
     id = Column(Integer, primary_key=True)
     created_at = Column(DateTime, default=func.now(), index=True,
                         nullable=False)
 
     @declared_attr
     def __tablename__(cls):
+        """The table name will be the lowercase of the class name."""
         return cls.__name__.lower()
 
     @classmethod
+    def fetch_by(cls, **kwargs):
+        """Return a single object (or None) by the named attributes."""
+        return cls.query_by(**kwargs).first()
+
+    @classmethod
     def fetch_by_id(cls, element_id):
+        """Return an object (or None) by its id."""
+        return cls.query_by(id=element_id).first()
+
+    @classmethod
+    def query_by(cls, **kwargs):
+        """Return a query result for the named attributes."""
         if not hasattr(builtins, '_sqla_mixins_session'):
             raise Exception('__builtin__._sqla_mixins_session must be set to '
                             'your session class')
         session = builtins._sqla_mixins_session()
-        return session.query(cls).filter_by(id=element_id).first()
+        return session.query(cls).filter_by(**kwargs)
+
+    def update(self, **kwargs):
+        """Update the named attributes.
+
+        Return true when an attribute was changed, indicating that the object
+        should be added to the session and committed."""
+        modified = False
+        for attr, value in kwargs.items():
+            if getattr(instance, attr) != value:
+                setattr(instance, attr, value)
+                modified = True
+        return modified
 
 
 class UserMixin(object):

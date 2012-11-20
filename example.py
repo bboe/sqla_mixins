@@ -87,6 +87,10 @@ def main():
     user3 = User.fetch_by_id(user1.id)
     assert(user1 == user3)
 
+    # Fetch a user by name
+    user4 = User.fetch_by(username=user1.username)
+    assert(user1 == user4)
+
 
 if __name__ == "__main__":
     main()
