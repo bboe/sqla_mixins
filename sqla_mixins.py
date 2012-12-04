@@ -8,7 +8,7 @@ if sys.version_info < (3, 0):
 else:
     import builtins
 
-__version__ = '0.3'
+__version__ = '0.4'
 
 
 class BasicBase(object):
@@ -41,14 +41,25 @@ class BasicBase(object):
         session = builtins._sqla_mixins_session()
         return session.query(cls).filter_by(**kwargs)
 
-    def update(self, **kwargs):
+    def update(self, _ignore_order=False, **kwargs):
         """Update the named attributes.
 
         Return true when an attribute was changed, indicating that the object
-        should be added to the session and committed."""
+        should be added to the session and committed.
+
+        Setting _ignore_order to True indicates that attribute lists should be
+        sorted before being compared. This is useful when updating relationship
+        lists.
+        """
         modified = False
         for attr, value in kwargs.items():
-            if getattr(self, attr) != value:
+            self_value = getattr(self, attr)
+            if _ignore_order and (isinstance(self_value, list) and
+                                  isinstance(value, list)):
+                if sorted(self_value) != sorted(value):
+                    setattr(self, attr, value)
+                    modified = True
+            elif getattr(self, attr) != value:
                 setattr(self, attr, value)
                 modified = True
         return modified
