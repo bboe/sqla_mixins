@@ -8,7 +8,7 @@ if sys.version_info < (3, 0):
 else:
     import builtins
 
-__version__ = '0.4'
+__version__ = '0.5'
 
 
 class BasicBase(object):
@@ -30,7 +30,7 @@ class BasicBase(object):
     @classmethod
     def fetch_by_id(cls, element_id):
         """Return an object (or None) by its id."""
-        return cls.query_by(id=element_id).first()
+        return cls.query_by(id=int(element_id)).first()
 
     @classmethod
     def query_by(cls, **kwargs):

@@ -84,7 +84,7 @@ def main():
             print('The password is not `{0}`'.format(password))
 
     # Fetch a user by id
-    user3 = User.fetch_by_id(user1.id)
+    user3 = User.fetch_by_id('{0}'.format(user1.id))  # Test id as string
     assert(user1 == user3)
 
     # Fetch a user by name
