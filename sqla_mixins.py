@@ -8,14 +8,14 @@ if sys.version_info < (3, 0):
 else:
     import builtins
 
-__version__ = '0.5'
+__version__ = '0.6'
 
 
 class BasicBase(object):
     """A base sqlalchemy class that provides `id` and `created_at` fields."""
     id = Column(Integer, primary_key=True)
-    created_at = Column(DateTime, default=func.now(), index=True,
-                        nullable=False)
+    created_at = Column(DateTime(timezone=True), default=func.now(),
+                        index=True, nullable=False)
 
     @declared_attr
     def __tablename__(cls):
