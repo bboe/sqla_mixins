@@ -41,6 +41,33 @@ class BasicBase(object):
         session = builtins._sqla_mixins_session()
         return session.query(cls).filter_by(**kwargs)
 
+    def clone(self, exclude=None, update=None):
+        """Return a shallow-copy clone of the sqlalchemy object.
+
+        Relationship objects are not copied, however foreign key assignments
+        held by this object are copied shallowly.
+
+        :param exclude: If provided, should be an iterable that contains the
+            names attributes to exclude from the copy. The attributes
+            `created_at` and `id` are always excluded.
+        :param update: If provided, should be a mapping of attribute name, to
+            the value that should be set.
+
+        """
+        # Prepare attribute exclusion set
+        if not exclude:
+            exclude = set()
+        if not isinstance(exclude, set):
+            exclude = set(exclude)
+        exclude.update(('created_at', 'id'))
+        # Build a mapping of attributes to values
+        attrs = {x: getattr(self, x) for x in self.__mapper__.columns.keys()
+                 if x not in exclude}
+        if update:  # Update the mapping if necessary
+            attrs.update(update)
+        # Build and return the SQLA object
+        return self.__class__(**attrs)
+
     def update(self, _ignore_order=False, **kwargs):
         """Update the named attributes.
 
