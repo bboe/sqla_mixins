@@ -1,7 +1,7 @@
 import sys
 from passlib.hash import pbkdf2_sha512
 from sqlalchemy import Column, DateTime, String, Integer, Unicode, func
-from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy.ext.declarative import declared_attr, has_inherited_table
 
 if sys.version_info < (3, 0):
     builtins = __import__('__builtin__')
@@ -19,7 +19,12 @@ class BasicBase(object):
 
     @declared_attr
     def __tablename__(cls):
-        """The table name will be the lowercase of the class name."""
+        """Set the tablename to be the lowercase of the class name.
+
+        Reference: http://docs.sqlalchemy.org/en/rel_0_9/orm/extensions/declarative.html#controlling-table-inheritance-with-mixins  # noqa
+        """
+        if has_inherited_table(cls) and BasicBase not in cls.__bases__:
+            return None
         return cls.__name__.lower()
 
     @classmethod
@@ -71,25 +76,24 @@ class BasicBase(object):
     def update(self, _ignore_order=False, **kwargs):
         """Update the named attributes.
 
-        Return true when an attribute was changed, indicating that the object
-        should be added to the session and committed.
+        Return a list of modified attribute names, or False if not updated.
 
         Setting _ignore_order to True indicates that attribute lists should be
         sorted before being compared. This is useful when updating relationship
         lists.
         """
-        modified = False
+        modified = []
         for attr, value in kwargs.items():
             self_value = getattr(self, attr)
             if _ignore_order and (isinstance(self_value, list) and
                                   isinstance(value, list)):
                 if sorted(self_value) != sorted(value):
                     setattr(self, attr, value)
-                    modified = True
+                    modified.append(attr)
             elif getattr(self, attr) != value:
                 setattr(self, attr, value)
-                modified = True
-        return modified
+                modified.append(attr)
+        return modified or False
 
 
 class UserMixin(object):
